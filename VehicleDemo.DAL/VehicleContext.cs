@@ -1,0 +1,26 @@
+﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Diagnostics;
+using VehicleDemo.Model;
+using VehicleDemo.Model.Common;
+
+namespace VehicleDemo.DAL
+{
+    public class VehicleContext : DbContext
+    {
+        public VehicleContext()
+       : base("VehicleContext")
+        {
+            // Write queries to debug output window
+            Database.Log = sql => Debug.WriteLine(sql);
+        }
+
+        public DbSet<VehicleMake> VehicleMakes { get; set; }
+        public DbSet<VehicleModel> VehicleModels { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        }
+    }
+}

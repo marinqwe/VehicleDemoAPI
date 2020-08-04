@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VehicleDemo.Common\VehicleDemo.Common.csproj" />
+    <ProjectReference Include="..\VehicleDemo.Model.Common\VehicleDemo.Model.Common.csproj" />
+    <ProjectReference Include="..\VehicleDemo.Model\VehicleDemo.Model.csproj" />
+  </ItemGroup>
+
+</Project>
