@@ -83,7 +83,7 @@ namespace VehicleDemo.Service
 
         public async Task<bool> EditVehicleMake(IVehicleMake vehicleMake)
         {
-            VehicleMake vehicleToCreate = new VehicleMake
+            VehicleMake vehicleToEdit = new VehicleMake
             {
                 Name = vehicleMake.Name,
                 Abrv = vehicleMake.Abrv,
@@ -91,7 +91,7 @@ namespace VehicleDemo.Service
             };
             try
             {
-                await uow.VehicleMakes.Edit(vehicleToCreate);
+                await uow.VehicleMakes.Edit(vehicleToEdit);
                 await uow.SaveChangesAsync();
 
                 return true;
