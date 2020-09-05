@@ -6,9 +6,7 @@ namespace VehicleDemo.Repository.Common
 {
     public interface IUnitOfWork : IDisposable
     {
-        IGenericRepository<VehicleMake> VehicleMakes { get; }
-        IGenericRepository<VehicleModel> VehicleModels { get; }
-        Task SaveChangesAsync();
+        Task<int> SaveChangesAsync();
         new void Dispose();
     }
 }

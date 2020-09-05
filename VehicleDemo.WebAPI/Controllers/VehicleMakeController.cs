@@ -9,6 +9,7 @@ using VehicleDemo.Model;
 using VehicleDemo.Model.Common;
 using VehicleDemo.Common.Helpers;
 using System.Linq;
+using System.Net;
 
 namespace VehicleDemo.WebAPI.Controllers
 {
@@ -39,9 +40,11 @@ namespace VehicleDemo.WebAPI.Controllers
             IEnumerable<IVehicleMake> vehicleMakes = await _vehicleService.GetVehicleMakes(filters, sorting, paging);
 
             List<VehicleMakeViewModel> vehiclesDest = iMapper.Map<List<VehicleMakeViewModel>>(vehicleMakes);
-            return Ok(new {
+            return Ok(new
+            {
                 vehicles = vehiclesDest,
-                pagingInfo = new {
+                pagingInfo = new
+                {
                     resultsPerPage = paging.ResultsPerPage,
                     totalCount = paging.TotalCount,
                     pageNumber = paging.Page,
@@ -64,45 +67,38 @@ namespace VehicleDemo.WebAPI.Controllers
         }
 
         [ResponseType(typeof(VehicleMakeViewModel))]
-        public async Task<IHttpActionResult> CreateVehicleMake(VehicleMake vehicleMake)
+        public async Task<IHttpActionResult> CreateVehicleMake(VehicleMakeViewModel vehicleMakeViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            VehicleMake vehicleMake = iMapper.Map<VehicleMake>(vehicleMakeViewModel);
             await _vehicleService.CreateVehicleMake(vehicleMake);
 
-            VehicleMakeViewModel vehicleMakeViewModel = iMapper.Map<VehicleMakeViewModel>(vehicleMake);
             return CreatedAtRoute("DefaultApi", new { id = vehicleMakeViewModel.MakeId }, vehicleMakeViewModel);
         }
 
         [ResponseType(typeof(VehicleMakeViewModel))]
-        public async Task<IHttpActionResult> PutVehicleMake(int id, VehicleMake vehicleMake)
+        public async Task<IHttpActionResult> PutVehicleMake(int id, VehicleMakeViewModel vehicleMakeViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != vehicleMake.MakeId)
+            if (id != vehicleMakeViewModel.MakeId)
             {
                 return BadRequest();
             }
-            bool isUpdated = await _vehicleService.EditVehicleMake(vehicleMake);
-            VehicleMakeViewModel vehicleMakeViewModel = iMapper.Map<VehicleMakeViewModel>(vehicleMake);
-            if (isUpdated == true)
-            {
+            VehicleMake vehicleMake = iMapper.Map<VehicleMake>(vehicleMakeViewModel);
+            await _vehicleService.EditVehicleMake(vehicleMake);
 
-                return Ok(vehicleMakeViewModel);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return Ok(vehicleMakeViewModel);
         }
 
-        [ResponseType(typeof(VehicleMakeViewModel))]
+        [ResponseType(typeof(void))]
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteVehicleMake(int id)
         {
@@ -115,17 +111,7 @@ namespace VehicleDemo.WebAPI.Controllers
 
             await _vehicleService.DeleteVehicleMake(id);
 
-            VehicleMakeViewModel vehicleMakeViewModel = iMapper.Map<VehicleMakeViewModel>(vehicleMake);
-            return Ok(vehicleMakeViewModel);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _vehicleService.Dispose();
-            }
-            base.Dispose(disposing);
+            return StatusCode(HttpStatusCode.NoContent);
         }
     }
 }

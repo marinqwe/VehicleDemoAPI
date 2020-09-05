@@ -63,37 +63,38 @@ namespace VehicleDemo.WebAPI.Controllers
 
 
         [ResponseType(typeof(VehicleModelViewModel))]
-        public async Task<IHttpActionResult> CreateVehicleModel(VehicleModel vehicleModel)
+        public async Task<IHttpActionResult> CreateVehicleModel(VehicleModelViewModel vehicleModelViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            VehicleModel vehicleModel = iMapper.Map<VehicleModel>(vehicleModelViewModel);
             await _vehicleService.CreateVehicleModel(vehicleModel);
 
-            VehicleModelViewModel vehicleModelViewModel = iMapper.Map<VehicleModelViewModel>(vehicleModel);
             return CreatedAtRoute("DefaultApi", new { id = vehicleModelViewModel.Id }, vehicleModelViewModel);
         }
 
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutVehicleModel(int id, VehicleModel vehicleModel)
+        [ResponseType(typeof(VehicleModelViewModel))]
+        public async Task<IHttpActionResult> PutVehicleModel(int id, VehicleModelViewModel vehicleModelViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != vehicleModel.Id)
+            if (id != vehicleModelViewModel.Id)
             {
                 return BadRequest();
             }
+            VehicleModel vehicleModel = iMapper.Map<VehicleModel>(vehicleModelViewModel);
             await _vehicleService.EditVehicleModel(vehicleModel);
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(vehicleModelViewModel);
         }
 
-        [ResponseType(typeof(VehicleModelViewModel))]
+        [ResponseType(typeof(void))]
         [HttpDelete]
         public async Task<IHttpActionResult> DeleteVehicleModel(int id)
         {
@@ -106,17 +107,7 @@ namespace VehicleDemo.WebAPI.Controllers
 
             await _vehicleService.DeleteVehicleModel(id);
 
-            VehicleModelViewModel vehicleModelViewModel = iMapper.Map<VehicleModelViewModel>(vehicleModel);
-            return Ok(vehicleModelViewModel);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _vehicleService.Dispose();
-            }
-            base.Dispose(disposing);
+            return StatusCode(HttpStatusCode.NoContent);
         }
     }
 }

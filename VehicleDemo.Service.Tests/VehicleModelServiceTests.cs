@@ -16,13 +16,13 @@ namespace VehicleDemo.Service.Tests
     public class VehicleModelServiceTests
     {
         private readonly VehicleModelService _sut;
+        private readonly Mock<IVehicleModelRepository> _modelRepoMock = new Mock<IVehicleModelRepository>();
         private readonly Mock<IUnitOfWork> _uowMock = new Mock<IUnitOfWork>();
 
         public VehicleModelServiceTests()
         {
-            _sut = new VehicleModelService(_uowMock.Object);
+            _sut = new VehicleModelService(_uowMock.Object, _modelRepoMock.Object);
         }
-
         [Fact]
         public async Task ShouldReturnModelList()
         {
@@ -53,7 +53,7 @@ namespace VehicleDemo.Service.Tests
             VehicleSorting sorting = new VehicleSorting(sortBy);
             VehiclePaging paging = new VehiclePaging(page);
 
-            _uowMock.Setup(x => x.VehicleModels.GetAll(It.IsAny<Expression<Func<VehicleModel, bool>>>(), It.IsAny<Func<IQueryable<VehicleModel>, IOrderedQueryable<VehicleModel>>>())).Returns(Task.FromResult(vehicleModels));
+            _modelRepoMock.Setup(x => x.GetAll(filters, sorting, paging)).Returns(Task.FromResult(vehicleModels));
             //Act
             var result = await _sut.GetVehicleModels(filters, sorting, paging);
 
@@ -75,7 +75,7 @@ namespace VehicleDemo.Service.Tests
             VehicleSorting sorting = new VehicleSorting(sortBy);
             VehiclePaging paging = new VehiclePaging(page);
 
-            _uowMock.Setup(x => x.VehicleModels.GetAll(It.IsAny<Expression<Func<VehicleModel, bool>>>(), It.IsAny<Func<IQueryable<VehicleModel>, IOrderedQueryable<VehicleModel>>>())).Returns(Task.FromResult(vehicleModels));
+            _modelRepoMock.Setup(x => x.GetAll(filters, sorting, paging)).Returns(Task.FromResult(vehicleModels));
             //Act
             var result = await _sut.GetVehicleModels(filters, sorting, paging);
 
@@ -96,7 +96,7 @@ namespace VehicleDemo.Service.Tests
                 MakeId = 1
             };
 
-            _uowMock.Setup(x => x.VehicleModels.FindById(modelId)).ReturnsAsync(vehicleModel);
+            _modelRepoMock.Setup(x => x.FindById(modelId)).ReturnsAsync(vehicleModel);
 
             //Act
             IVehicleModel model = await _sut.FindVehicleModel(modelId);
@@ -118,7 +118,7 @@ namespace VehicleDemo.Service.Tests
                 MakeId = 1
             };
 
-            _uowMock.Setup(x => x.VehicleModels.Create(vehicleModel)).ReturnsAsync(true);
+            _modelRepoMock.Setup(x => x.Create(vehicleModel)).ReturnsAsync(true);
 
             //Act
             var result = await _sut.CreateVehicleModel(vehicleModel);
@@ -139,7 +139,7 @@ namespace VehicleDemo.Service.Tests
                 MakeId = 1
             };
 
-            _uowMock.Setup(x => x.VehicleModels.Edit(vehicleModel)).ReturnsAsync(true);
+            _modelRepoMock.Setup(x =>x.Edit(vehicleModel)).ReturnsAsync(true);
 
             //Act
             var result = await _sut.EditVehicleModel(vehicleModel);
@@ -154,7 +154,7 @@ namespace VehicleDemo.Service.Tests
             //Arrange
             var modelId = 2;
 
-            _uowMock.Setup(x => x.VehicleModels.Delete(modelId)).ReturnsAsync(true);
+            _modelRepoMock.Setup(x => x.Delete(modelId)).ReturnsAsync(true);
 
             //Act
             var result = await _sut.DeleteVehicleModel(modelId);

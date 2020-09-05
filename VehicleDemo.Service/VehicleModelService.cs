@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VehicleDemo.Common.Helpers;
 using VehicleDemo.Model;
 using VehicleDemo.Model.Common;
+using VehicleDemo.Repository;
 using VehicleDemo.Repository.Common;
 using VehicleDemo.Service.Common;
 
@@ -14,58 +15,25 @@ namespace VehicleDemo.Service
     public class VehicleModelService : IVehicleModelService
     {
         private readonly IUnitOfWork uow;
+        private readonly IVehicleModelRepository _repository;
 
-        public VehicleModelService(IUnitOfWork unitOfWork)
+        public VehicleModelService(IUnitOfWork unitOfWork, IVehicleModelRepository repository)
         {
             uow = unitOfWork;
+            _repository = repository;
         }
 
         public async Task<IEnumerable<IVehicleModel>> GetVehicleModels(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            Func<IQueryable<VehicleModel>, IOrderedQueryable<VehicleModel>> sortBy = null;
-            Expression<Func<VehicleModel, bool>> filter = null;
 
-            if (filters.ShouldApplyFilters())
-            {
-                filter = (m => m.Name.Contains(filters.FilterBy)
-                                    || m.Abrv.Contains(filters.FilterBy)
-                                    || m.MakeId.ToString().Contains(filters.FilterBy));
-            }
+            IQueryable<IVehicleModel> query = await _repository.GetAll(filters, sorting, paging);
 
-            switch (sorting.SortBy)
-            {
-                case "name_desc":
-                    sortBy = q => q.OrderByDescending(v => v.Name);
-                    break;
-
-                case "abrv":
-                    sortBy = q => q.OrderBy(v => v.Abrv);
-                    break;
-
-                case "abrv_desc":
-                    sortBy = q => q.OrderByDescending(v => v.Abrv);
-                    break;
-
-                case "makeId":
-                    sortBy = q => q.OrderBy(v => v.MakeId);
-                    break;
-
-                case "makeId_desc":
-                    sortBy = q => q.OrderByDescending(v => v.MakeId);
-                    break;
-
-                default:
-                    sortBy = q => q.OrderBy(v => v.Name);
-                    break;
-            }
-            IQueryable<IVehicleModel> query = await uow.VehicleModels.GetAll(filter: filter, orderBy: sortBy);
-            paging.TotalCount = query.Count();
-            return query.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ToList();
+            return query.ToList();
         }
 
         public async Task<IVehicleModel> FindVehicleModel(object id)
         {
-            return await uow.VehicleModels.FindById(id);
+            return await _repository.FindById(id);
         }
 
         public async Task<bool> CreateVehicleModel(IVehicleModel vehicleModel)
@@ -80,7 +48,7 @@ namespace VehicleDemo.Service
 
             try
             {
-                await uow.VehicleModels.Create(model);
+                await _repository.Create(model);
                 await uow.SaveChangesAsync();
 
                 return true;
@@ -102,7 +70,7 @@ namespace VehicleDemo.Service
             };
             try
             {
-                await uow.VehicleModels.Edit(model);
+                await _repository.Edit(model);
                 await uow.SaveChangesAsync();
 
                 return true;
@@ -117,7 +85,7 @@ namespace VehicleDemo.Service
         {
             try
             {
-                await uow.VehicleModels.Delete(id);
+                await _repository.Delete(id);
                 await uow.SaveChangesAsync();
 
                 return true;

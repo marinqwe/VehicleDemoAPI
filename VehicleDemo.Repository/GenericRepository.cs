@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using VehicleDemo.Common.Helpers;
 using VehicleDemo.DAL;
 
 namespace VehicleDemo.Repository
@@ -20,33 +21,17 @@ namespace VehicleDemo.Repository
             dbSet = _context.Set<T>();
         }
 
-        public async Task<IQueryable<T>> GetAll(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null
-            )
+        public virtual async Task<IQueryable<T>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            IQueryable<T> query = dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-            if (orderBy != null)
-            {
-                return orderBy(query);
-            }
-            else
-            {
-                return query;
-            }
+            return dbSet.AsQueryable();
         }
 
-        public async Task<T> FindById(object id)
+        public virtual async Task<T> FindById(object id)
         {
             return await dbSet.FindAsync(id);
         }
 
-        public async Task<bool> Create(T entity)
+        public virtual async Task<bool> Create(T entity)
         {
             try
             {
@@ -59,7 +44,7 @@ namespace VehicleDemo.Repository
             }
         }
 
-        public async Task<bool> Edit(T entity)
+        public virtual async Task<bool> Edit(T entity)
         {
             try
             {
@@ -76,7 +61,7 @@ namespace VehicleDemo.Repository
                 return false;
             }
         }
-        public void Delete(T entityToDelete)
+        public virtual void Delete(T entityToDelete)
         {
             try
             {
@@ -96,7 +81,7 @@ namespace VehicleDemo.Repository
                 throw;
             }
         }
-        public async Task<bool> Delete(object id)
+        public virtual async Task<bool> Delete(object id)
         {
             try
             {

@@ -60,15 +60,25 @@
     <Compile Include="GenericRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="VehicleMakeRepository.cs" />
+    <Compile Include="VehicleModelRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VehicleDemo.Common\VehicleDemo.Common.csproj">
+      <Project>{f73827e3-9cfb-4c66-aa7a-46e8b98d9806}</Project>
+      <Name>VehicleDemo.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VehicleDemo.DAL\VehicleDemo.DAL.csproj">
       <Project>{bb31e585-adb3-42f9-8b25-920e9187d711}</Project>
       <Name>VehicleDemo.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VehicleDemo.Model.Common\VehicleDemo.Model.Common.csproj">
+      <Project>{30d5bd00-b245-4b48-94b2-322f3bbcab69}</Project>
+      <Name>VehicleDemo.Model.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\VehicleDemo.Model\VehicleDemo.Model.csproj">
       <Project>{14f8d6d0-b80c-444a-befe-f8467eea57ee}</Project>

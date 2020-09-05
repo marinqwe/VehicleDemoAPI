@@ -8,8 +8,8 @@ namespace VehicleDemo.WebAPI.App_Start
     {
         public MapperProfile()
         {
-            CreateMap<VehicleMake, VehicleMakeViewModel>();
-            CreateMap<VehicleModel, VehicleModelViewModel>();
+            CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
+            CreateMap<VehicleModel, VehicleModelViewModel>().ReverseMap();
         }
     }
 }

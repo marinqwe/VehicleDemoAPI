@@ -102,6 +102,10 @@
       <Project>{5a2deaa7-ab85-4621-9c97-c6f6d3e00b98}</Project>
       <Name>VehicleDemo.Repository.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VehicleDemo.Repository\VehicleDemo.Repository.csproj">
+      <Project>{7157EF14-2B06-4674-AFFE-6A237FAE91C5}</Project>
+      <Name>VehicleDemo.Repository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VehicleDemo.Service\VehicleDemo.Service.csproj">
       <Project>{3e0c9285-bc7c-4f3d-b160-538014488dc9}</Project>
       <Name>VehicleDemo.Service</Name>

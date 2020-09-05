@@ -9,6 +9,7 @@ namespace VehicleDemo.WebAPI.App_Start
     using Ninject.Web.Common.WebHost;
     using System;
     using System.Web;
+    using VehicleDemo.DAL;
     using VehicleDemo.Model;
     using VehicleDemo.Model.Common;
     using VehicleDemo.Repository;
@@ -73,8 +74,13 @@ namespace VehicleDemo.WebAPI.App_Start
             kernel.Bind<IVehicleMakeService>().To<VehicleMakeService>();
             kernel.Bind<IVehicleModelService>().To<VehicleModelService>();
 
+            kernel.Bind<IVehicleMakeRepository>().To<VehicleMakeRepository>();
+            kernel.Bind<IVehicleModelRepository>().To<VehicleModelRepository>();
+
             kernel.Bind<IVehicleMake>().To<VehicleMake>();
             kernel.Bind<IVehicleModel>().To<VehicleModel>();
+
+            kernel.Bind<VehicleContext>().ToSelf().InRequestScope();
         }
     }
 }
