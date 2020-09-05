@@ -6,7 +6,7 @@ namespace VehicleDemo.Repository.Common
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task<int> SaveChangesAsync();
+        Task SaveChangesAsync();
         new void Dispose();
     }
 }

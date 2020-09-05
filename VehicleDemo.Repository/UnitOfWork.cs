@@ -15,15 +15,9 @@ namespace VehicleDemo.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            int result = 0;
-            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                result = await _context.SaveChangesAsync();
-                scope.Complete();
-            }
-            return result;
+            await _context.SaveChangesAsync();
         }
         private bool disposed;
         protected virtual void Dispose(bool disposing)
