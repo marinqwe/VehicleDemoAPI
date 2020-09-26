@@ -36,37 +36,24 @@ namespace VehicleDemo.Service
 
         public async Task<bool> CreateVehicleMake(IVehicleMake vehicleMake)
         {
-            VehicleMake vehicleToCreate = new VehicleMake
-            {
-                Name = vehicleMake.Name,
-                Abrv = vehicleMake.Abrv,
-                MakeId = vehicleMake.MakeId
-            };
             try
             {
-                await _repository.Create(vehicleToCreate);
+                await _repository.Create(vehicleMake);
                 await uow.SaveChangesAsync();
 
                 return true;
             }
             catch
             {
-                Console.WriteLine("ERRRRRRRRRRRRRRRERRRRR");
                 return false;
             }
         }
 
         public async Task<bool> EditVehicleMake(IVehicleMake vehicleMake)
         {
-            VehicleMake vehicleToEdit = new VehicleMake
-            {
-                Name = vehicleMake.Name,
-                Abrv = vehicleMake.Abrv,
-                MakeId = vehicleMake.MakeId
-            };
             try
             {
-                await _repository.Edit(vehicleToEdit);
+                await _repository.Edit(vehicleMake);
                 await uow.SaveChangesAsync();
 
                 return true;

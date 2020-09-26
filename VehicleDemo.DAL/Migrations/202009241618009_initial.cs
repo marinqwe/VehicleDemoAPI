@@ -3,12 +3,12 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialCreate : DbMigration
+    public partial class initial : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.VehicleMake",
+                "dbo.VehicleMakeEntityModel",
                 c => new
                     {
                         MakeId = c.Int(nullable: false, identity: true),
@@ -18,26 +18,22 @@
                 .PrimaryKey(t => t.MakeId);
             
             CreateTable(
-                "dbo.VehicleModel",
+                "dbo.VehicleModelEntityModel",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        MakeId = c.Int(nullable: false),
                         Name = c.String(),
                         Abrv = c.String(),
-                        MakeId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.VehicleMake", t => t.MakeId, cascadeDelete: true)
-                .Index(t => t.MakeId);
+                .PrimaryKey(t => t.Id);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.VehicleModel", "MakeId", "dbo.VehicleMake");
-            DropIndex("dbo.VehicleModel", new[] { "MakeId" });
-            DropTable("dbo.VehicleModel");
-            DropTable("dbo.VehicleMake");
+            DropTable("dbo.VehicleModelEntityModel");
+            DropTable("dbo.VehicleMakeEntityModel");
         }
     }
 }

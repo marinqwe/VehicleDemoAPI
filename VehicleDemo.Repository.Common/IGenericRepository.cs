@@ -11,7 +11,7 @@ namespace VehicleDemo.Repository
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<IQueryable<T>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging);
+        Task<IEnumerable<T>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging);
         Task<T> FindById(object id);
 
         Task<bool> Create(T entity);

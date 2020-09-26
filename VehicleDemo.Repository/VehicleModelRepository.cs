@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -8,22 +10,26 @@ using System.Threading.Tasks;
 using VehicleDemo.Common.Helpers;
 using VehicleDemo.DAL;
 using VehicleDemo.Model;
+using VehicleDemo.Model.Common;
 using VehicleDemo.Repository.Common;
+using VehicleDemo.Repository.Mapper;
 
 namespace VehicleDemo.Repository
 {
-    public class VehicleModelRepository : GenericRepository<VehicleModel>, IVehicleModelRepository
+    public class VehicleModelRepository : GenericRepository<VehicleModelEntityModel>, IVehicleModelRepository
     {
         private readonly VehicleContext _context;
-        private readonly DbSet<VehicleModel> dbSet;
-        public VehicleModelRepository(VehicleContext context) : base(context)
+        private readonly DbSet<VehicleModelEntityModel> dbSet;
+        private readonly IMapper iMapper;
+        public VehicleModelRepository(VehicleContext context, IMapper mapper) : base(context)
         {
             _context = context;
-            dbSet = _context.Set<VehicleModel>();
+            dbSet = _context.Set<VehicleModelEntityModel>();
+            iMapper = mapper;
         }
-        public override async Task<IQueryable<VehicleModel>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
+        public async Task<IEnumerable<IVehicleModel>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            IQueryable<VehicleModel> models = dbSet;
+            IQueryable<VehicleModelEntityModel> models = dbSet;
 
             if (filters.ShouldApplyFilters())
             {
@@ -60,16 +66,19 @@ namespace VehicleDemo.Repository
                     models = models.OrderBy(v => v.Name);
                     break;
             }
-            return models.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage);
+            return await models.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleModel>(MapperConfig.CreateMapperConfig()).ToListAsync();
         }
-        public override async Task<VehicleModel> FindById(object id)
+        public async Task<IVehicleModel> FindById(object id)
         {
-            return await dbSet.FindAsync(id);
+            VehicleModelEntityModel entity = await dbSet.FindAsync(id);
+            IVehicleModel model = iMapper.Map<VehicleModel>(entity);
+            return model;
         }
-        public override async Task<bool> Create(VehicleModel entity)
+        public async Task<bool> Create(IVehicleModel vehicleModel)
         {
             try
             {
+                VehicleModelEntityModel entity = iMapper.Map<VehicleModelEntityModel>(vehicleModel);
                 dbSet.Add(entity);
                 return true;
             }
@@ -78,10 +87,11 @@ namespace VehicleDemo.Repository
                 return false;
             }
         }
-        public override async Task<bool> Edit(VehicleModel entity)
+        public async Task<bool> Edit(IVehicleModel vehicleModel)
         {
             try
             {
+                VehicleModelEntityModel entity = iMapper.Map<VehicleModelEntityModel>(vehicleModel);
                 DbEntityEntry dbEntityEntry = _context.Entry(entity);
                 if (dbEntityEntry.State == EntityState.Detached)
                 {
@@ -95,10 +105,11 @@ namespace VehicleDemo.Repository
                 return false;
             }
         }
-        public override void Delete(VehicleModel entityToDelete)
+        public void Delete(IVehicleModel vehicleModel)
         {
             try
             {
+                VehicleModelEntityModel entityToDelete = iMapper.Map<VehicleModelEntityModel>(vehicleModel);
                 DbEntityEntry dbEntityEntry = _context.Entry(entityToDelete);
                 if (dbEntityEntry.State != EntityState.Deleted)
                 {
@@ -115,12 +126,12 @@ namespace VehicleDemo.Repository
                 throw;
             }
         }
-        public override async Task<bool> Delete(object id)
+        public async Task<bool> Delete(object id)
         {
             try
             {
-                VehicleModel entity = await dbSet.FindAsync(id);
-                Delete(entity);
+                VehicleModelEntityModel entity = await dbSet.FindAsync(id);
+                await Delete(entity);
                 return true;
             }
             catch

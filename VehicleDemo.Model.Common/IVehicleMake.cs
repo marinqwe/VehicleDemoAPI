@@ -10,6 +10,5 @@ namespace VehicleDemo.Model.Common
         int MakeId { get; set; }
         string Name { get; set; }
         string Abrv { get; set; }
-        ICollection<IVehicleModel> VehicleModels { get; set; }
     }
 }

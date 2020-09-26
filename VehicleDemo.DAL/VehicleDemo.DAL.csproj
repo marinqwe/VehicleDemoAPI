@@ -56,29 +56,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\202004200947365_InitialCreate.cs" />
-    <Compile Include="Migrations\202004200947365_InitialCreate.designer.cs">
-      <DependentUpon>202004200947365_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005221324158_changed model locations.cs" />
-    <Compile Include="Migrations\202005221324158_changed model locations.designer.cs">
-      <DependentUpon>202005221324158_changed model locations.cs</DependentUpon>
+    <Compile Include="Migrations\202009241618009_initial.cs" />
+    <Compile Include="Migrations\202009241618009_initial.designer.cs">
+      <DependentUpon>202009241618009_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VehicleContext.cs" />
+    <Compile Include="VehicleMakeEntityModel.cs" />
+    <Compile Include="VehicleModelEntityModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004200947365_InitialCreate.resx">
-      <DependentUpon>202004200947365_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005221324158_changed model locations.resx">
-      <DependentUpon>202005221324158_changed model locations.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VehicleDemo.Model.Common\VehicleDemo.Model.Common.csproj">
@@ -89,6 +79,11 @@
       <Project>{14f8d6d0-b80c-444a-befe-f8467eea57ee}</Project>
       <Name>VehicleDemo.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202009241618009_initial.resx">
+      <DependentUpon>202009241618009_initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

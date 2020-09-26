@@ -7,13 +7,13 @@ namespace VehicleDemo.DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class changedmodellocations : IMigrationMetadata
+    public sealed partial class initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(changedmodellocations));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202005221324158_changed model locations"; }
+            get { return "202009241618009_initial"; }
         }
         
         string IMigrationMetadata.Source

@@ -8,7 +8,6 @@ using VehicleDemo.WebAPI.ViewModels;
 using VehicleDemo.Model;
 using VehicleDemo.Model.Common;
 using VehicleDemo.Common.Helpers;
-using System.Linq;
 using System.Net;
 
 namespace VehicleDemo.WebAPI.Controllers

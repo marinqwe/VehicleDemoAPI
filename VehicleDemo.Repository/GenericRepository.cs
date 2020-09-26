@@ -21,9 +21,9 @@ namespace VehicleDemo.Repository
             dbSet = _context.Set<T>();
         }
 
-        public virtual async Task<IQueryable<T>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
+        public virtual async Task<IEnumerable<T>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            return dbSet.AsQueryable();
+            return await dbSet.ToListAsync();
         }
 
         public virtual async Task<T> FindById(object id)

@@ -1,31 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using VehicleDemo.DAL;
 using VehicleDemo.Model;
 using VehicleDemo.Common.Helpers;
 using System.Data.Entity.Infrastructure;
 using VehicleDemo.Repository.Common;
+using VehicleDemo.Model.Common;
+using AutoMapper;
+using VehicleDemo.Repository.Mapper;
+using AutoMapper.QueryableExtensions;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace VehicleDemo.Repository
 {
-    public class VehicleMakeRepository : GenericRepository<VehicleMake>, IVehicleMakeRepository
+    public class VehicleMakeRepository : GenericRepository<VehicleMakeEntityModel>, IVehicleMakeRepository
     {
         private readonly VehicleContext _context;
-        private readonly DbSet<VehicleMake> dbSet;
+        private readonly DbSet<VehicleMakeEntityModel> dbSet;
+        private readonly IMapper iMapper;
 
-
-        public VehicleMakeRepository(VehicleContext context) : base(context)
+        public VehicleMakeRepository(VehicleContext context, IMapper mapper) : base(context)
         {
             _context = context;
-            dbSet = _context.Set<VehicleMake>();
+            dbSet = _context.Set<VehicleMakeEntityModel>();
+            iMapper = mapper;
         }
-        public override async Task<IQueryable<VehicleMake>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
+        public async Task<IEnumerable<IVehicleMake>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            IQueryable<VehicleMake> vehicles = dbSet;
+            IQueryable<VehicleMakeEntityModel> vehicles = dbSet;
+
 
             if (filters.ShouldApplyFilters())
             {
@@ -52,16 +58,20 @@ namespace VehicleDemo.Repository
                     break;
             }
 
-            return vehicles.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage);
+
+            return await vehicles.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleMake>(MapperConfig.CreateMapperConfig()).ToListAsync();
         }
-        public override async Task<VehicleMake> FindById(object id)
+        public async Task<IVehicleMake> FindById(object id)
         {
-            return await dbSet.FindAsync(id);
+            VehicleMakeEntityModel vehicleEntity = await dbSet.FindAsync(id);
+            IVehicleMake vehicleMake = iMapper.Map<VehicleMake>(vehicleEntity);
+            return vehicleMake;
         }
-        public override async Task<bool> Create(VehicleMake entity)
+        public async Task<bool> Create(IVehicleMake vehicleMake)
         {
             try
             {
+                VehicleMakeEntityModel entity = iMapper.Map<VehicleMakeEntityModel>(vehicleMake);
                 dbSet.Add(entity);
                 return true;
             }
@@ -70,14 +80,16 @@ namespace VehicleDemo.Repository
                 return false;
             }
         }
-        public override async Task<bool> Edit(VehicleMake entity)
+        public async Task<bool> Edit(IVehicleMake entity)
         {
             try
             {
-                DbEntityEntry dbEntityEntry = _context.Entry(entity);
+                VehicleMakeEntityModel vehicleEntity = iMapper.Map<VehicleMakeEntityModel>(entity);
+
+                DbEntityEntry dbEntityEntry = _context.Entry(vehicleEntity);
                 if (dbEntityEntry.State == EntityState.Detached)
                 {
-                    dbSet.Attach(entity);
+                    dbSet.Attach(vehicleEntity);
                 }
                 dbEntityEntry.State = EntityState.Modified;
                 return true;
@@ -87,19 +99,21 @@ namespace VehicleDemo.Repository
                 return false;
             }
         }
-        public override void Delete(VehicleMake entityToDelete)
+        public void Delete(IVehicleMake entityToDelete)
         {
             try
             {
-                DbEntityEntry dbEntityEntry = _context.Entry(entityToDelete);
+                VehicleMakeEntityModel vehicleEntity = iMapper.Map<VehicleMakeEntityModel>(entityToDelete);
+
+                DbEntityEntry dbEntityEntry = _context.Entry(vehicleEntity);
                 if (dbEntityEntry.State != EntityState.Deleted)
                 {
                     dbEntityEntry.State = EntityState.Deleted;
                 }
                 else
                 {
-                    dbSet.Attach(entityToDelete);
-                    dbSet.Remove(entityToDelete);
+                    dbSet.Attach(vehicleEntity);
+                    dbSet.Remove(vehicleEntity);
                 }
             }
             catch (Exception)
@@ -107,12 +121,13 @@ namespace VehicleDemo.Repository
                 throw;
             }
         }
-        public override async Task<bool> Delete(object id)
+        public async Task<bool> Delete(object id)
         {
             try
             {
-                VehicleMake entity = await dbSet.FindAsync(id);
-                Delete(entity);
+
+                VehicleMakeEntityModel entity = await dbSet.FindAsync(id);
+                await Delete(entity);
                 return true;
             }
             catch

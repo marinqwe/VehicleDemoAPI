@@ -27,7 +27,7 @@ namespace VehicleDemo.Service.Tests
         public async Task ShouldReturnModelList()
         {
             //Arrange
-            var vehicleModels = new List<VehicleModel>()
+            var vehicleModels = new List<IVehicleModel>()
             {
                 new VehicleModel()
                 {
@@ -43,7 +43,7 @@ namespace VehicleDemo.Service.Tests
                     Abrv = "Audi",
                     MakeId = 2
                 },
-            }.AsQueryable();
+            }.AsEnumerable();
 
             string searchString = "";
             string sortBy = "";
@@ -65,7 +65,7 @@ namespace VehicleDemo.Service.Tests
         public async Task ShouldReturnEmptyModelList()
         {
             //Arrange
-            var vehicleModels = new List<VehicleModel>().AsQueryable();
+            var vehicleModels = new List<IVehicleModel>().AsEnumerable();
 
             string searchString = "";
             string sortBy = "";

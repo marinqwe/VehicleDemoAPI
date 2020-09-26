@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Ninject;
 using Ninject.Modules;
-using Ninject.Web.Common;
-using VehicleDemo.Repository;
-using VehicleDemo.Repository.Common;
-using VehicleDemo.WebAPI.Controllers;
 
 namespace VehicleDemo.WebAPI.App_Start
 {

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VehicleDemo.Common.Helpers;
-using VehicleDemo.Model;
 using VehicleDemo.Model.Common;
-using VehicleDemo.Repository;
 using VehicleDemo.Repository.Common;
 using VehicleDemo.Service.Common;
 
@@ -26,7 +22,7 @@ namespace VehicleDemo.Service
         public async Task<IEnumerable<IVehicleModel>> GetVehicleModels(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
 
-            IQueryable<IVehicleModel> query = await _repository.GetAll(filters, sorting, paging);
+            IEnumerable<IVehicleModel> query = await _repository.GetAll(filters, sorting, paging);
 
             return query.ToList();
         }
@@ -38,17 +34,9 @@ namespace VehicleDemo.Service
 
         public async Task<bool> CreateVehicleModel(IVehicleModel vehicleModel)
         {
-            VehicleModel model = new VehicleModel()
-            {
-                Name = vehicleModel.Name,
-                Abrv = vehicleModel.Abrv,
-                MakeId = vehicleModel.MakeId,
-                Id = vehicleModel.Id
-            };
-
             try
             {
-                await _repository.Create(model);
+                await _repository.Create(vehicleModel);
                 await uow.SaveChangesAsync();
 
                 return true;
@@ -61,16 +49,9 @@ namespace VehicleDemo.Service
 
         public async Task<bool> EditVehicleModel(IVehicleModel vehicleModel)
         {
-            VehicleModel model = new VehicleModel()
-            {
-                Name = vehicleModel.Name,
-                Abrv = vehicleModel.Abrv,
-                MakeId = vehicleModel.MakeId,
-                Id = vehicleModel.Id
-            };
             try
             {
-                await _repository.Edit(model);
+                await _repository.Edit(vehicleModel);
                 await uow.SaveChangesAsync();
 
                 return true;

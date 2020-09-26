@@ -15,8 +15,8 @@ namespace VehicleDemo.DAL
             Database.Log = sql => Debug.WriteLine(sql);
         }
 
-        public DbSet<VehicleMake> VehicleMakes { get; set; }
-        public DbSet<VehicleModel> VehicleModels { get; set; }
+        public DbSet<VehicleMakeEntityModel> VehicleMakes { get; set; }
+        public DbSet<VehicleModelEntityModel> VehicleModels { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
