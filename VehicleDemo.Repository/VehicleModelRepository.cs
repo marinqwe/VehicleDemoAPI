@@ -12,7 +12,6 @@ using VehicleDemo.DAL;
 using VehicleDemo.Model;
 using VehicleDemo.Model.Common;
 using VehicleDemo.Repository.Common;
-using VehicleDemo.Repository.Mapper;
 
 namespace VehicleDemo.Repository
 {
@@ -21,11 +20,13 @@ namespace VehicleDemo.Repository
         private readonly VehicleContext _context;
         private readonly DbSet<VehicleModelEntityModel> dbSet;
         private readonly IMapper iMapper;
-        public VehicleModelRepository(VehicleContext context, IMapper mapper) : base(context)
+        private readonly MapperConfiguration _mapperConfiguration;
+        public VehicleModelRepository(VehicleContext context, IMapper mapper, MapperConfiguration mapperConfiguration) : base(context)
         {
             _context = context;
             dbSet = _context.Set<VehicleModelEntityModel>();
             iMapper = mapper;
+            _mapperConfiguration = mapperConfiguration;
         }
         public async Task<IEnumerable<IVehicleModel>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
@@ -66,7 +67,7 @@ namespace VehicleDemo.Repository
                     models = models.OrderBy(v => v.Name);
                     break;
             }
-            return await models.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleModel>(MapperConfig.CreateMapperConfig()).ToListAsync();
+            return await models.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleModel>(_mapperConfiguration).ToListAsync();
         }
         public async Task<IVehicleModel> FindById(object id)
         {

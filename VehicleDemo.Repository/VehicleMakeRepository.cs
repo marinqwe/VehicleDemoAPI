@@ -9,7 +9,6 @@ using System.Data.Entity.Infrastructure;
 using VehicleDemo.Repository.Common;
 using VehicleDemo.Model.Common;
 using AutoMapper;
-using VehicleDemo.Repository.Mapper;
 using AutoMapper.QueryableExtensions;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,12 +20,14 @@ namespace VehicleDemo.Repository
         private readonly VehicleContext _context;
         private readonly DbSet<VehicleMakeEntityModel> dbSet;
         private readonly IMapper iMapper;
+        private readonly MapperConfiguration _mapperConfiguration;
 
-        public VehicleMakeRepository(VehicleContext context, IMapper mapper) : base(context)
+        public VehicleMakeRepository(VehicleContext context, IMapper mapper, MapperConfiguration mapperConfiguration) : base(context)
         {
             _context = context;
             dbSet = _context.Set<VehicleMakeEntityModel>();
             iMapper = mapper;
+            _mapperConfiguration = mapperConfiguration;
         }
         public async Task<IEnumerable<IVehicleMake>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
@@ -59,7 +60,7 @@ namespace VehicleDemo.Repository
             }
 
 
-            return await vehicles.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleMake>(MapperConfig.CreateMapperConfig()).ToListAsync();
+            return await vehicles.Skip(paging.ItemsToSkip).Take(paging.ResultsPerPage).ProjectTo<VehicleMake>(_mapperConfiguration).ToListAsync();
         }
         public async Task<IVehicleMake> FindById(object id)
         {
