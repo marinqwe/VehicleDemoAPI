@@ -15,23 +15,21 @@ using System.Collections.Generic;
 
 namespace VehicleDemo.Repository
 {
-    public class VehicleMakeRepository : GenericRepository<VehicleMakeEntityModel>, IVehicleMakeRepository
+    public class VehicleMakeRepository : IVehicleMakeRepository
     {
-        private readonly VehicleContext _context;
-        private readonly DbSet<VehicleMakeEntityModel> dbSet;
+        private readonly IGenericRepository<VehicleMakeEntityModel> _genericRepository;
         private readonly IMapper iMapper;
         private readonly MapperConfiguration _mapperConfiguration;
 
-        public VehicleMakeRepository(VehicleContext context, IMapper mapper, MapperConfiguration mapperConfiguration) : base(context)
+        public VehicleMakeRepository(IMapper mapper, MapperConfiguration mapperConfiguration, IGenericRepository<VehicleMakeEntityModel> genericRepository )
         {
-            _context = context;
-            dbSet = _context.Set<VehicleMakeEntityModel>();
+            _genericRepository = genericRepository;
             iMapper = mapper;
             _mapperConfiguration = mapperConfiguration;
         }
         public async Task<IEnumerable<IVehicleMake>> GetAll(VehicleFilters filters, VehicleSorting sorting, VehiclePaging paging)
         {
-            IQueryable<VehicleMakeEntityModel> vehicles = dbSet;
+            IQueryable<VehicleMakeEntityModel> vehicles = _genericRepository.GetAll();
 
 
             if (filters.ShouldApplyFilters())
@@ -64,7 +62,7 @@ namespace VehicleDemo.Repository
         }
         public async Task<IVehicleMake> FindById(object id)
         {
-            VehicleMakeEntityModel vehicleEntity = await dbSet.FindAsync(id);
+            VehicleMakeEntityModel vehicleEntity = await _genericRepository.FindById(id);
             IVehicleMake vehicleMake = iMapper.Map<VehicleMake>(vehicleEntity);
             return vehicleMake;
         }
@@ -73,7 +71,7 @@ namespace VehicleDemo.Repository
             try
             {
                 VehicleMakeEntityModel entity = iMapper.Map<VehicleMakeEntityModel>(vehicleMake);
-                dbSet.Add(entity);
+                await _genericRepository.Create(entity);
                 return true;
             }
             catch
@@ -87,12 +85,7 @@ namespace VehicleDemo.Repository
             {
                 VehicleMakeEntityModel vehicleEntity = iMapper.Map<VehicleMakeEntityModel>(entity);
 
-                DbEntityEntry dbEntityEntry = _context.Entry(vehicleEntity);
-                if (dbEntityEntry.State == EntityState.Detached)
-                {
-                    dbSet.Attach(vehicleEntity);
-                }
-                dbEntityEntry.State = EntityState.Modified;
+                await _genericRepository.Edit(vehicleEntity);
                 return true;
             }
             catch
@@ -106,16 +99,7 @@ namespace VehicleDemo.Repository
             {
                 VehicleMakeEntityModel vehicleEntity = iMapper.Map<VehicleMakeEntityModel>(entityToDelete);
 
-                DbEntityEntry dbEntityEntry = _context.Entry(vehicleEntity);
-                if (dbEntityEntry.State != EntityState.Deleted)
-                {
-                    dbEntityEntry.State = EntityState.Deleted;
-                }
-                else
-                {
-                    dbSet.Attach(vehicleEntity);
-                    dbSet.Remove(vehicleEntity);
-                }
+                _genericRepository.Delete(vehicleEntity);
             }
             catch (Exception)
             {
@@ -126,8 +110,7 @@ namespace VehicleDemo.Repository
         {
             try
             {
-
-                VehicleMakeEntityModel entity = await dbSet.FindAsync(id);
+                VehicleMakeEntityModel entity = await _genericRepository.FindById(id);
                 await Delete(entity);
                 return true;
             }

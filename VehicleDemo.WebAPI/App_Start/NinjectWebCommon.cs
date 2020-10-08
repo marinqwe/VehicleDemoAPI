@@ -74,6 +74,8 @@ namespace VehicleDemo.WebAPI.App_Start
             kernel.Bind<IVehicleMakeService>().To<VehicleMakeService>();
             kernel.Bind<IVehicleModelService>().To<VehicleModelService>();
 
+            kernel.Bind<IGenericRepository<VehicleMakeEntityModel>>().To<GenericRepository<VehicleMakeEntityModel>>();
+            kernel.Bind<IGenericRepository<VehicleModelEntityModel>>().To<GenericRepository<VehicleModelEntityModel>>();
             kernel.Bind<IVehicleMakeRepository>().To<VehicleMakeRepository>();
             kernel.Bind<IVehicleModelRepository>().To<VehicleModelRepository>();
 
